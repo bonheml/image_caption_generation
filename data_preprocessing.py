@@ -4,13 +4,18 @@ from text_processing import CaptionPreProcessor
 from utils import get_image_ids, split_and_save, load_features
 
 """
-The dataset used here is Flickr8K
-# Reference
+The dataset used for image caption generation is Flickr8K
+and the one used for embedding matrix is GloVe
+
+# References
 M. Hodosh, P. Young and J. Hockenmaier (2013)
 "Framing Image Description as a Ranking Task: Data, Models and 
 Evaluation Metrics", Journal of Artificial Intelligence Research,
 Volume 47, pages 853-899
 http://www.jair.org/papers/paper3994.html
+
+Jeffrey Pennington, Richard Socher, and Christopher D. Manning. 2014. 
+GloVe: Global Vectors for Word Representation.
 """
 
 
@@ -38,14 +43,26 @@ def train_test_split(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Pre process dataset')
-    parser.add_argument('images_directory')
-    parser.add_argument('captions_filename')
-    parser.add_argument('train_filename')
-    parser.add_argument('test_filename')
-    parser.add_argument('dev_filename')
-    parser.add_argument('features_outfile')
-    parser.add_argument('captions_outfile')
+    parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers()
+
+    # Preprocess the dataset and save features and cleaned caption
+    preprocessor = subparsers.add_parser('preprocess_dataset')
+    preprocessor.add_argument('images_directory')
+    preprocessor.add_argument('captions_filename')
+    preprocessor.add_argument('features_outfile')
+    preprocessor.add_argument('captions_outfile')
+    preprocessor.set_defaults(func=extract_all)
+
+    # Split the saved features and cleaned captions into train test and dev
+    # files
+    train_test_split_parser = subparsers.add_parser('train_test_split')
+    train_test_split_parser.add_argument('features_outfile')
+    train_test_split_parser.add_argument('captions_outfile')
+    train_test_split_parser.add_argument('train_filename')
+    train_test_split_parser.add_argument('test_filename')
+    train_test_split_parser.add_argument('dev_filename')
+    train_test_split_parser.set_defaults(func=train_test_split)
+
     arguments = parser.parse_args()
-    extract_all(arguments)
-    train_test_split(arguments)
+    arguments.func(arguments)
