@@ -2,6 +2,9 @@ import re
 import string
 from os.path import splitext
 
+import numpy as np
+from keras.preprocessing.text import Tokenizer
+
 from utils import save_as_pickle
 
 
@@ -51,3 +54,38 @@ class CaptionPreProcessor:
             save_as_pickle(cleaned_captions, outfile)
 
         return cleaned_captions
+
+
+class EmbeddingMatrixGenerator:
+    def __init__(self):
+        self.tokenizer = Tokenizer()
+
+    def generate_embedding_index(self, infile):
+        embeddings_index = {}
+        texts = []
+        with open(infile) as f:
+            for line in f:
+                texts.append(line)
+                values = line.split()
+                embeddings_index[values[0]] = np.asarray(values[1:],
+                                                         dtype='float32')
+        self.tokenizer.fit_on_texts(texts)
+        return embeddings_index
+
+    def generate_embedding_matrix(self, embedding_idx, embedding_dim):
+        word_idx = self.tokenizer.word_index
+        embedding_matrix = np.zeros((len(word_idx) + 1, embedding_dim))
+        for word, i in word_idx.items():
+            embedding_vector = embedding_idx.get(word)
+            if embedding_vector is not None:
+                embedding_matrix[i] = embedding_vector[:embedding_dim]
+        return embedding_matrix
+
+    def generate_embedding(self, embedding_dim, infile, outfile=None):
+        embedding_idx = self.generate_embedding_index(infile)
+        embedding_matrix = self.generate_embedding_matrix(embedding_idx,
+                                                          embedding_dim)
+        if outfile is not None:
+            save_as_pickle((embedding_matrix, self.tokenizer), outfile)
+
+        return (embedding_matrix, self.tokenizer)
