@@ -40,7 +40,7 @@ class CaptionPreProcessor:
                 if len(tokens) < 2:
                     continue
                 img_id = splitext(tokens[0])[0]
-                caption = "".join(tokens[1:])
+                caption = " ".join(tokens[1:])
                 cleaned_caption = self.clean_caption(caption)
                 cleaned_caption = '<s> ' + cleaned_caption + ' </s>'
                 if img_id not in cleaned_captions:
