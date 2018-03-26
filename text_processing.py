@@ -2,7 +2,7 @@ import re
 import string
 from os.path import splitext
 
-from utils import save_features
+from utils import save_as_pickle
 
 
 class CaptionPreProcessor:
@@ -48,6 +48,6 @@ class CaptionPreProcessor:
                 cleaned_captions[img_id].append(cleaned_caption)
 
         if outfile is not None:
-            save_features(cleaned_captions, outfile)
+            save_as_pickle(cleaned_captions, outfile)
 
         return cleaned_captions

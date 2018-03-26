@@ -1,7 +1,7 @@
 import argparse
 from image_processing import FeatureExtractor
 from text_processing import CaptionPreProcessor
-from utils import get_image_ids, split_and_save, load_features
+from utils import get_image_ids, split_and_save, load_pickle_file
 
 """
 The dataset used for image caption generation is Flickr8K
@@ -32,8 +32,8 @@ def train_test_split(args):
     splits = {'train': get_image_ids(args.train_filename),
               'dev': get_image_ids(args.dev_filename),
               'test': get_image_ids(args.test_filename)}
-    captions = load_features(args.captions_outfile)
-    features = load_features(args.features_outfile)
+    captions = load_pickle_file(args.captions_outfile)
+    features = load_pickle_file(args.features_outfile)
 
     for split, ids in splits.items():
         split_and_save(captions, ids,
