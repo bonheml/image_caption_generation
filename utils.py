@@ -2,16 +2,15 @@ from os.path import splitext
 from pickle import load, dump
 
 
-def load_features(filename, images_ids):
+def load_features(filename):
     """
     Load pickle file containing features
     :param filename: Name of the pickle file to load
-    :param images_ids: List of image ids
     :return: dict of features for each image id.
     """
     with open(filename, mode='rb') as f:
         features = load(f)
-    return {image_id: features[image_id] for image_id in images_ids}
+    return features
 
 
 def save_features(features, outfile):
@@ -36,13 +35,13 @@ def get_image_ids(filename):
     return image_ids
 
 
-def split_and_save(infile, ids, outfile):
+def split_and_save(features, ids, outfile):
     """
-    Get element from file infile with id in ids and save them in file outfile
-    :param infile: file containing the data to split and save
-    :param ids: key to keep
+    Filter features with id in ids and save them in file outfile
+    :param features: whole features dictionary
+    :param ids: keys to keep
     :param outfile: filename to save the filtered dict
     :return: None
     """
-    features = load_features(infile, ids)
+    features = {image_id: features[image_id] for image_id in ids}
     save_features(features, outfile)

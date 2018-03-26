@@ -1,7 +1,7 @@
 import argparse
 from image_processing import FeatureExtractor
 from text_processing import CaptionPreProcessor
-from utils import get_image_ids, split_and_save
+from utils import get_image_ids, split_and_save, load_features
 
 """
 The dataset used here is Flickr8K
@@ -27,12 +27,14 @@ def train_test_split(args):
     splits = {'train': get_image_ids(args.train_filename),
               'dev': get_image_ids(args.dev_filename),
               'test': get_image_ids(args.test_filename)}
+    captions = load_features(args.captions_outfile)
+    features = load_features(args.features_outfile)
 
     for split, ids in splits.items():
-        split_and_save(args.captions_outfile, ids,
-                       "_".join([split, args.captions_outfile]))
-        split_and_save(args.features_outfile, ids,
-                       "_".join([split, args.features_outfile]))
+        split_and_save(captions, ids,
+                       ".".join([args.captions_outfile, split]))
+        split_and_save(features, ids,
+                       ".".join([args.features_outfile, split]))
 
 
 if __name__ == "__main__":
