@@ -1,8 +1,8 @@
 import argparse
 
-from image_processing import FeatureExtractor
-from text_processing import CaptionPreProcessor, EmbeddingMatrixGenerator
-from utils import get_image_ids, split_and_save, load_pickle_file
+from data_preprocessing.image_processing import FeatureExtractor
+from data_preprocessing.text_processing import CaptionPreProcessor, EmbeddingMatrixGenerator
+from commons.utils import get_image_ids, split_and_save, load_pickle_file
 
 """
 The dataset used for image caption generation is Flickr8K

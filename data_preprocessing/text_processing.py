@@ -5,7 +5,7 @@ from os.path import splitext
 import numpy as np
 from keras.preprocessing.text import Tokenizer
 
-from utils import save_as_pickle
+from commons.utils import save_as_pickle
 from nltk.corpus import brown
 
 

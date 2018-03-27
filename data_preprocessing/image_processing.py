@@ -6,7 +6,7 @@ from keras.applications import Xception
 from keras.applications.xception import preprocess_input
 from keras.preprocessing.image import load_img, img_to_array
 
-from utils import save_as_pickle
+from commons.utils import save_as_pickle
 
 
 class FeatureExtractor:

@@ -1,9 +1,8 @@
 import itertools
 import numpy as np
-from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 from keras.utils import to_categorical
-from utils import load_pickle_file
+from commons.utils import load_pickle_file
 
 
 class Sequencer:
