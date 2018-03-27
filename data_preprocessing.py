@@ -1,4 +1,5 @@
 import argparse
+
 from image_processing import FeatureExtractor
 from text_processing import CaptionPreProcessor, EmbeddingMatrixGenerator
 from utils import get_image_ids, split_and_save, load_pickle_file
@@ -19,6 +20,12 @@ GloVe: Global Vectors for Word Representation.
 """
 
 def extract_all(args):
+    """
+    Extract features from pictures, clean captions and save each dataset in
+    a pickle file
+    :param args: Argparse arguments for preprocess dataset command
+    :return: None
+    """
     feature_extractor = FeatureExtractor()
     caption_cleaner = CaptionPreProcessor()
     feature_extractor.extract_all_features(args.images_directory,
@@ -28,6 +35,12 @@ def extract_all(args):
 
 
 def train_test_split(args):
+    """
+    Split the features and captions saved by extract_all in train test and dev
+    files
+    :param args: Argparse arguments for train_test_split command
+    :return: None
+    """
     splits = {'train': get_image_ids(args.train_filename),
               'dev': get_image_ids(args.dev_filename),
               'test': get_image_ids(args.test_filename)}
@@ -42,9 +55,17 @@ def train_test_split(args):
 
 
 def generate_embedding_matrix(args):
-    generator = EmbeddingMatrixGenerator()
+    """
+    Generate an embedding matrix using glove and a keras Tokenizer trained with
+    nltk brown dataset. the tuple (embedding_matrix, Tokenizer) is saved into a
+    pickle file to be reused with the model later.
+    :param args: Argparse arguments for generate_embedding_matrix command
+    :return: None
+    """
+    generator = EmbeddingMatrixGenerator(1000)
     generator.generate_embedding(args.embedding_dim, args.glove_file,
                                  args.outfile)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

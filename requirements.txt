@@ -3,4 +3,5 @@ h5py
 pillow
 keras
 numpy
+nltk
 scikit-learn

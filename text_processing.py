@@ -6,6 +6,7 @@ import numpy as np
 from keras.preprocessing.text import Tokenizer
 
 from utils import save_as_pickle
+from nltk.corpus import brown
 
 
 class CaptionPreProcessor:
@@ -57,22 +58,46 @@ class CaptionPreProcessor:
 
 
 class EmbeddingMatrixGenerator:
-    def __init__(self):
-        self.tokenizer = Tokenizer()
+    def __init__(self, max_vocab):
+        """
+        Initialise and train a Tokenizer retaining max_vocab words
+        :param max_vocab: vocabulary size of the tokenizer
+        """
+        self.tokenizer = Tokenizer(num_words=max_vocab)
+        self.train_tokenizer()
+
+    def train_tokenizer(self):
+        """
+        Train the tokenizer on brown corpus
+        Beware, the brown corpus should be downloaded using the command
+        nltk.download('brown') beforehand
+        :return: None
+        """
+        sentences = [" ".join(s) for s in brown.sents()]
+        self.tokenizer.fit_on_texts(sentences)
 
     def generate_embedding_index(self, infile):
+        """
+        Generate indexes for embedding matrix using GloVe file
+        :param infile: Glove file
+        :return: dictionary of words and their GloVe vectors
+        """
         embeddings_index = {}
-        texts = []
         with open(infile) as f:
             for line in f:
-                texts.append(line)
                 values = line.split()
                 embeddings_index[values[0]] = np.asarray(values[1:],
                                                          dtype='float32')
-        self.tokenizer.fit_on_texts(texts)
         return embeddings_index
 
     def generate_embedding_matrix(self, embedding_idx, embedding_dim):
+        """
+        Generate an embedding matrix
+        :param embedding_idx: dictionary word/vector pairs
+        :param embedding_dim: size of the vector used for each word
+        representation
+        :return: embedding matrix
+        """
         word_idx = self.tokenizer.word_index
         embedding_matrix = np.zeros((len(word_idx) + 1, embedding_dim))
         for word, i in word_idx.items():
@@ -82,6 +107,16 @@ class EmbeddingMatrixGenerator:
         return embedding_matrix
 
     def generate_embedding(self, embedding_dim, infile, outfile=None):
+        """
+        Generate an embedding matrix and if outfile is not None save it along
+        with the tokenizer used for word indexing to avoid changes in tokenizer
+        word indexes and retraining.
+        :param embedding_dim:
+        :param infile: File used to read the Glove vectors
+        :param outfile: pickle target file. If None, embedding and tokenizer
+        will simply be returned
+        :return: (embedding, tokenizer used)
+        """
         embedding_idx = self.generate_embedding_index(infile)
         embedding_matrix = self.generate_embedding_matrix(embedding_idx,
                                                           embedding_dim)
