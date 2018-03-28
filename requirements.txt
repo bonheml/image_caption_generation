@@ -4,4 +4,6 @@ pillow
 keras
 numpy
 nltk
+pydot
+graphviz
 scikit-learn
