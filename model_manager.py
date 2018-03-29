@@ -13,24 +13,26 @@ from models.model_eval import evaluate_model
 def train(args):
     epochs = 1000
     batch_size = 100
-    steps = epochs/batch_size
+    train_samples = 306404
+    test_samples = 50903
     train_generator = Sequencer(args.train_captions, args.train_features,
                                 args.tokenizer, batch_size)
     test_generator = Sequencer(args.test_captions, args.test_features,
-                                args.tokenizer, batch_size)
+                               args.tokenizer, batch_size)
     model = build_merge_model(args.tokenizer, (2048,))
     model.summary()
     plot_model(model, to_file='model.png', show_shapes=True)
-    model_file = ('model.epoch_{epoch:02d}-loss_{val_loss:.2f}.hdf5')
+    model_file = 'model.epoch_{epoch:02d}-loss_{val_loss:.2f}.hdf5'
     if args.models_directory:
         filepath = args.models_directory + '/' + model_file
     else:
         filepath = model_file
     checkpoint = ModelCheckpoint(filepath, save_best_only=True)
     model.fit_generator(train_generator.generate_sequences(),
-                        steps_per_epoch=steps, epochs = epochs,
+                        steps_per_epoch=train_samples//batch_size,
+                        epochs = epochs,
                         validation_data=test_generator.generate_sequences(),
-                        validation_steps=steps,
+                        validation_steps=test_samples//batch_size,
                         callbacks=[checkpoint, EarlyStopping(patience=4)])
 
 
@@ -40,6 +42,7 @@ def evaluate(args):
     tokenizer = load_pickle_file(args.tokenizer)[1]
     model = load_model(args.model)
     evaluate_model(model, captions, features, tokenizer)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
