@@ -2,7 +2,7 @@ from os import listdir
 from os.path import abspath, splitext
 
 from keras import Model
-from keras.applications import Xception
+from keras.applications import Xception, VGG16, MobileNet, VGG19
 from keras.applications.xception import preprocess_input
 from keras.preprocessing.image import load_img, img_to_array
 
@@ -10,20 +10,23 @@ from commons.utils import save_as_pickle
 
 
 class FeatureExtractor:
-    def __init__(self):
+    def __init__(self, model_name='VGG16'):
+        self.model = self._prepare_model(model_name)
+
+    def _prepare_model(self, model_name):
         """
         Initialise the feature extractor
-        The model used is a pre-trained model Xception from Keras
-        # Reference
-        Xception: Deep Learning with Depthwise Separable Convolutions
-        (https://arxiv.org/abs/1610.02357)
         Here we remove the prediction layer in order to perform the feature
         extraction only.
         """
-        model = Xception()
+        models = {"xception": Xception, "VGG16": VGG16, "VGG19": VGG19,
+                  "mobilenet": MobileNet}
+        if model_name not in models:
+            raise NotImplementedError
+        model = models[model_name]()
         model.layers.pop()
         model = Model(inputs=model.inputs, outputs=model.layers[-1].output)
-        self.model = model
+        return model
 
     def extract_features(self, input_file):
         """
