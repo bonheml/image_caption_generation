@@ -7,3 +7,4 @@ nltk
 pydot
 graphviz
 scikit-learn
+jupyter
