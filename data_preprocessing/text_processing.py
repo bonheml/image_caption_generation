@@ -64,7 +64,7 @@ class EmbeddingMatrixGenerator:
         Initialise and train a Tokenizer retaining max_vocab words
         :param max_vocab: vocabulary size of the tokenizer
         """
-        self.tokenizer = Tokenizer()
+        self.tokenizer = Tokenizer(oov_token='oov')
         self.train_tokenizer()
         self._correct_word_index(max_vocab)
 
@@ -79,7 +79,9 @@ class EmbeddingMatrixGenerator:
         self.tokenizer.word_index = {e: i for e, i in
                                      self.tokenizer.word_index.items() if
                                      i <= max_vocab}
-        self.tokenizer.word_index[self.tokenizer.oov_token] = max_vocab + 1
+        self.tokenizer.word_index['startseq'] = max_vocab + 1
+        self.tokenizer.word_index['endseq'] = max_vocab + 2
+        self.tokenizer.word_index[self.tokenizer.oov_token] = max_vocab + 3
 
     def train_tokenizer(self):
         """
