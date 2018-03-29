@@ -10,9 +10,7 @@ def generate_description(model, tokenizer, features, max_len=40):
         sequence = tokenizer.texts_to_sequences([input_text])[0]
         sequence = pad_sequences([sequence], maxlen=max_len)
         y_pred = model.predict([features, sequence])
-        print(y_pred)
         y_pred = argmax(y_pred)
-        print(y_pred)
         word = reverse_word_index[y_pred]
         if word is None or word == 'endseq':
             break
