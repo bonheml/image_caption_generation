@@ -10,7 +10,7 @@ from commons.utils import save_as_pickle
 
 
 class FeatureExtractor:
-    def __init__(self, model_name='VGG16'):
+    def __init__(self, model_name='xception'):
         self.model = self._prepare_model(model_name)
 
     def _prepare_model(self, model_name):
