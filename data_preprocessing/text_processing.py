@@ -23,6 +23,7 @@ class CaptionPreProcessor:
         :param caption: Caption to clean
         :return: Cleaned caption
         """
+        caption = " ".join([t for t in caption.split() if len(t) > 1])
         caption = caption.lower()
         caption = self._punct_regex.sub("", caption)
         caption = caption.translate(self._digit_trans)
@@ -46,7 +47,7 @@ class CaptionPreProcessor:
                 img_id = splitext(tokens[0])[0]
                 caption = " ".join(tokens[1:])
                 cleaned_caption = self.clean_caption(caption)
-                cleaned_caption = '<s> ' + cleaned_caption + ' </s>'
+                cleaned_caption = 'startseq ' + cleaned_caption + ' endseq'
                 if img_id not in cleaned_captions:
                     cleaned_captions[img_id] = []
                 cleaned_captions[img_id].append(cleaned_caption)
@@ -63,8 +64,22 @@ class EmbeddingMatrixGenerator:
         Initialise and train a Tokenizer retaining max_vocab words
         :param max_vocab: vocabulary size of the tokenizer
         """
-        self.tokenizer = Tokenizer(num_words=max_vocab)
+        self.tokenizer = Tokenizer()
         self.train_tokenizer()
+        self._correct_word_index(max_vocab)
+
+    def _correct_word_index(self, max_vocab):
+        """
+        This function is a workaround to get only max_vocab word indexed
+        as tokenizer num_word parameter is not behaving as expected
+        see https://github.com/keras-team/keras/issues/8092 for more details
+        :param max_vocab: max vocabulary to keep
+        :return: None
+        """
+        self.tokenizer.word_index = {e: i for e, i in
+                                     self.tokenizer.word_index.items() if
+                                     i <= max_vocab}
+        self.tokenizer.word_index[self.tokenizer.oov_token] = max_vocab + 1
 
     def train_tokenizer(self):
         """
@@ -99,7 +114,7 @@ class EmbeddingMatrixGenerator:
         :return: embedding matrix
         """
         word_idx = self.tokenizer.word_index
-        embedding_matrix = np.zeros((len(word_idx) + 1, embedding_dim))
+        embedding_matrix = np.zeros((len(word_idx), embedding_dim))
         for word, i in word_idx.items():
             embedding_vector = embedding_idx.get(word)
             if embedding_vector is not None:
@@ -123,4 +138,4 @@ class EmbeddingMatrixGenerator:
         if outfile is not None:
             save_as_pickle((embedding_matrix, self.tokenizer), outfile)
 
-        return (embedding_matrix, self.tokenizer)
+        return embedding_matrix, self.tokenizer

@@ -18,7 +18,7 @@ def build_merge_model(embedding, features_shape):
     :return: Merge model
     """
     embedding_matrix, tokenizer = load_pickle_file(embedding)
-    vocab_size = len(tokenizer.word_index) + 1
+    vocab_size = len(tokenizer.word_index)
 
     # Features block
     features_input = Input(shape=features_shape, name="features_input")
@@ -27,20 +27,16 @@ def build_merge_model(embedding, features_shape):
                            name='features_dense')(features_dropout)
 
     # Sequence block
-    sequence_input = Input(shape=(40,),
-                           name='sequence_input')
-    sequence_embedding = Embedding(vocab_size,
-                                   embedding_matrix.shape[1],
-                                   weights=[embedding_matrix],
-                                   mask_zero=True,
+    sequence_input = Input(shape=(40,), name='sequence_input')
+    sequence_embedding = Embedding(vocab_size, embedding_matrix.shape[1],
+                                   weights=[embedding_matrix], mask_zero=True,
                                    name='sequence_embedding')(sequence_input)
     sequence_dropout = Dropout(0.5, name='sequence_dropout')(sequence_embedding)
     sequence_lstm = LSTM(256, name='sequence_lstm')(sequence_dropout)
 
     # Merge block
     merge_add = add([features_dense, sequence_lstm], name='merge_add')
-    merge_dense = Dense(256, activation='relu',
-                        name='merge_dense')(merge_add)
+    merge_dense = Dense(256, activation='relu', name='merge_dense')(merge_add)
     merge_output = Dense(vocab_size, activation='softmax',
                          name='merge_output')(merge_dense)
 

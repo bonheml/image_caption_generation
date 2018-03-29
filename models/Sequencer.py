@@ -19,7 +19,7 @@ class Sequencer:
         self.features = load_pickle_file(features)
         self.tokenizer = load_pickle_file(tokenizer)[1]
         self.max_len = max_len
-        self.vocab_len = len(self.tokenizer.word_index) + 1
+        self.vocab_len = len(self.tokenizer.word_index)
         self.batch_size = batch_size
 
     def generate_sequences(self):
