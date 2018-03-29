@@ -62,7 +62,7 @@ def generate_embedding_matrix(args):
     :param args: Argparse arguments for generate_embedding_matrix command
     :return: None
     """
-    generator = EmbeddingMatrixGenerator(1000)
+    generator = EmbeddingMatrixGenerator(5000)
     generator.generate_embedding(args.embedding_dim, args.glove_file,
                                  args.outfile)
 
