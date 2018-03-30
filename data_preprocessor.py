@@ -1,7 +1,8 @@
 import argparse
 
 from data_preprocessing.image_processing import FeatureExtractor
-from data_preprocessing.text_processing import CaptionPreProcessor, EmbeddingMatrixGenerator
+from data_preprocessing.text_processing import (CaptionPreProcessor,
+                                                TokenizerTrainer)
 from commons.utils import get_image_ids, split_and_save, load_pickle_file
 
 """
@@ -18,6 +19,7 @@ http://www.jair.org/papers/paper3994.html
 Jeffrey Pennington, Richard Socher, and Christopher D. Manning. 2014. 
 GloVe: Global Vectors for Word Representation.
 """
+
 
 def extract_all(args):
     """
@@ -54,17 +56,15 @@ def train_test_split(args):
                        ".".join([args.features_outfile, split]))
 
 
-def generate_embedding_matrix(args):
+def fit_tokenizer(args):
     """
-    Generate an embedding matrix using glove and a keras Tokenizer trained with
-    nltk brown dataset. the tuple (embedding_matrix, Tokenizer) is saved into a
-    pickle file to be reused with the model later.
-    :param args: Argparse arguments for generate_embedding_matrix command
+    Fit tokenizer on the whole corpus
+    :param args: Argparse arguments for fit_tokenizer command
     :return: None
     """
-    generator = EmbeddingMatrixGenerator(1000)
-    generator.generate_embedding(args.embedding_dim, args.glove_file,
-                                 args.outfile)
+    captions = load_pickle_file(args.caption_file)
+    generator = TokenizerTrainer()
+    generator.fit_tokenizer(captions, args.outfile)
 
 
 if __name__ == "__main__":
@@ -90,11 +90,10 @@ if __name__ == "__main__":
     train_test_split_parser.set_defaults(func=train_test_split)
 
     # Create a gloVe matrix and save it as pickle file
-    glove_matrix = subparsers.add_parser('generate_embedding_matrix')
-    glove_matrix.add_argument('glove_file')
+    glove_matrix = subparsers.add_parser('fit_tokenizer')
+    glove_matrix.add_argument('caption_file')
     glove_matrix.add_argument('outfile')
-    glove_matrix.add_argument('embedding_dim', type=int)
-    glove_matrix.set_defaults(func=generate_embedding_matrix)
+    glove_matrix.set_defaults(func=fit_tokenizer)
 
     arguments = parser.parse_args()
     arguments.func(arguments)
