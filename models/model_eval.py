@@ -3,7 +3,7 @@ from nltk.translate.bleu_score import corpus_bleu
 from numpy import argmax
 
 
-def generate_description(model, tokenizer, features, max_len=40):
+def generate_description(model, tokenizer, features, max_len=50):
     input_text = 'startseq'
     reverse_word_index = {v:k for k,v in tokenizer.word_index.items()}
     for i in range(max_len):
@@ -30,7 +30,7 @@ def get_bleu_score(y_true, y_pred):
     print("{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}".format(*bleu_scores))
 
 
-def evaluate_model(model, captions, features, tokenizer, max_len=40):
+def evaluate_model(model, captions, features, tokenizer, max_len=50):
     y_true = []
     y_pred = []
     for img_id, caption_list in captions.items():
