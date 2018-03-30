@@ -11,14 +11,14 @@ from models.model_eval import evaluate_model
 
 
 def train(args):
-    epochs = 1000
-    batch_size = 100
+    epochs = 100
+    batch_size = 128
     train_samples = 306404
     test_samples = 50903
     train_generator = Sequencer(args.train_captions, args.train_features,
-                                args.tokenizer, batch_size)
+                                args.tokenizer)
     test_generator = Sequencer(args.test_captions, args.test_features,
-                               args.tokenizer, batch_size)
+                               args.tokenizer)
     model = build_merge_model(args.tokenizer, (2048,))
     model.summary()
     plot_model(model, to_file='model.png', show_shapes=True)
@@ -33,13 +33,13 @@ def train(args):
                         epochs = epochs,
                         validation_data=test_generator.generate_sequences(),
                         validation_steps=test_samples//batch_size,
-                        callbacks=[checkpoint, EarlyStopping(patience=4)])
+                        callbacks=[checkpoint, EarlyStopping(patience=1)])
 
 
 def evaluate(args):
     captions = load_pickle_file(args.captions)
     features = load_pickle_file(args.features)
-    tokenizer = load_pickle_file(args.tokenizer)[1]
+    tokenizer = load_pickle_file(args.tokenizer)
     model = load_model(args.model)
     evaluate_model(model, captions, features, tokenizer)
 
