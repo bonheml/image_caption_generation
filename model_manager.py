@@ -15,14 +15,17 @@ def train(args):
     batch_size = 128
     train_samples = 306404
     test_samples = 50903
+
     train_generator = Sequencer(args.train_captions, args.train_features,
                                 args.tokenizer)
     test_generator = Sequencer(args.test_captions, args.test_features,
                                args.tokenizer)
-    model = build_merge_model(args.tokenizer, (2048,))
+    img_id = list(train_generator.features.keys())[0]
+    feature_shape = (train_generator.features[img_id].shape[1],)
+    model = build_merge_model(args.tokenizer, feature_shape)
     model.summary()
-    plot_model(model, to_file='model.png', show_shapes=True)
-    model_file = 'model.epoch_{epoch:02d}-loss_{val_loss:.2f}.hdf5'
+    plot_model(model, to_file=args.model_name + '_model.png', show_shapes=True)
+    model_file = args.model_name + '.epoch_{epoch:02d}-loss_{val_loss:.2f}.hdf5'
     if args.models_directory:
         filepath = args.models_directory + '/' + model_file
     else:
@@ -55,6 +58,8 @@ if __name__ == "__main__":
     trainer.add_argument('test_captions')
     trainer.add_argument('train_features')
     trainer.add_argument('test_features')
+    trainer.add_argument('-m', '--model_name', default='xception',
+                         choices=['xception', 'VGG16', 'VGG19'])
     trainer.add_argument('-d', '--models_directory')
     trainer.set_defaults(func=train)
 

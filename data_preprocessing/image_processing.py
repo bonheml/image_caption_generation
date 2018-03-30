@@ -12,6 +12,7 @@ from commons.utils import save_as_pickle
 class FeatureExtractor:
     def __init__(self, model_name='xception'):
         self.model = self._prepare_model(model_name)
+        self.input_shape = (224, 224)
 
     def _prepare_model(self, model_name):
         """
@@ -19,10 +20,14 @@ class FeatureExtractor:
         Here we remove the prediction layer in order to perform the feature
         extraction only.
         """
-        models = {"xception": Xception, "VGG16": VGG16, "VGG19": VGG19,
+        models = {"xception": Xception,
+                  "VGG16": VGG16,
+                  "VGG19": VGG19,
                   "mobilenet": MobileNet}
         if model_name not in models:
             raise NotImplementedError
+        if model_name is 'xception':
+            self.input_shape = (299, 299)
         model = models[model_name]()
         model.layers.pop()
         model = Model(inputs=model.inputs, outputs=model.layers[-1].output)
@@ -30,7 +35,7 @@ class FeatureExtractor:
 
     def extract_features(self, input_file):
         """
-        Load image from file 'input_file' with size 299x299
+        Load image from file 'input_file'
         convert it to an array and reshape it to use it with Xception model
         compute the intern pre processing needed by Xception and predict the
         features of the image
@@ -38,7 +43,7 @@ class FeatureExtractor:
         :return:
         """
         filename = abspath(input_file)
-        img = load_img(filename, target_size=(299, 299))
+        img = load_img(filename, target_size=self.input_shape)
         vectorized_img = img_to_array(img)
         vectorized_img = vectorized_img.reshape((1, vectorized_img.shape[0],
                                                  vectorized_img.shape[1],
@@ -56,15 +61,11 @@ class FeatureExtractor:
         :return: dict of features
         """
         features = {}
-        i = 0
 
         for file in listdir(directory):
-            if i > 2:
-                break
             img_id = splitext(file)[0]
             file_path = "/".join([directory, file])
             features[img_id] = self.extract_features(file_path)
-            i += 1
 
         if outfile is not None:
             save_as_pickle(features, outfile)
