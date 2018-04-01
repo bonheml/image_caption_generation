@@ -45,7 +45,7 @@ class CaptionPreProcessor:
                 img_id = splitext(tokens[0])[0]
                 caption = " ".join(tokens[1:])
                 cleaned_caption = self.clean_caption(caption)
-                cleaned_caption = 'startseq ' + cleaned_caption + 'endseq'
+                cleaned_caption = 'startseq ' + cleaned_caption + ' endseq'
                 if img_id not in cleaned_captions:
                     cleaned_captions[img_id] = []
                 cleaned_captions[img_id].append(cleaned_caption)
