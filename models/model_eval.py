@@ -39,7 +39,7 @@ class Beam:
     def __str__(self):
         heap_str = "Beam search of {} top sequences\n".format(self.n_top)
         for proba, _, seq in self.heap:
-            heap_str += "{} with {:.2f} probability\n".format(seq, proba)
+            heap_str += "{} with {:.2E} probability\n".format(seq, proba)
         return heap_str
 
 
@@ -77,7 +77,7 @@ class BeamSearch:
         y_pred = self.model.predict([features, sequence])[0]
         for i, proba in enumerate(y_pred):
             word = self.rev_word_idx.get(i)
-            if word is None:
+            if word is None or word == self.tokenizer.oov_token:
                 continue
             if word == self.end_token:
                 curr_beam.append(elem[0] * proba, True, elem[2])
@@ -100,7 +100,6 @@ class BeamSearch:
                 else:
                     self._make_pred(features, curr_beam, elem)
             (best_proba, done, best_seq) = max(curr_beam)
-            print(curr_beam)
             best_seq = best_seq[1:]
             if done is True or len(best_seq) >= self.clip:
                 return " ".join(best_seq), best_proba
