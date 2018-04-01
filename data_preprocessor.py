@@ -70,7 +70,7 @@ def fit_tokenizer(args):
 
 
 if __name__ == "__main__":
-    np.random.seed(42) # Seed for repeatability
+    np.random.seed(42)  # Seed for repeatability
 
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers()

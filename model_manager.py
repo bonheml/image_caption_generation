@@ -17,23 +17,24 @@ def train(args):
     train_samples = 306404
     test_samples = 50903
 
-    train_generator = Sequencer(args.train_captions, args.train_features,
-                                args.tokenizer)
-    test_generator = Sequencer(args.test_captions, args.test_features,
-                               args.tokenizer)
-    img_id = list(train_generator.features.keys())[0]
-    feature_shape = (train_generator.features[img_id].shape[1],)
+    train_gen = Sequencer(args.train_captions, args.train_features,
+                          args.tokenizer)
+    test_gen = Sequencer(args.test_captions, args.test_features,
+                         args.tokenizer)
+    img_id = list(train_gen.features.keys())[0]
+    feature_shape = (train_gen.features[img_id].shape[1],)
     model = build_merge_model(args.tokenizer, feature_shape)
     model.summary()
     plot_model(model, to_file=args.model_name + '_model.png', show_shapes=True)
     model_file = args.model_name + '.epoch_{epoch:02d}-loss_{val_loss:.2f}.hdf5'
     checkpoint = ModelCheckpoint(model_file, save_best_only=True)
-    hist = model.fit_generator(train_generator.generate_sequences(),
-                               steps_per_epoch=train_samples//batch_size,
-                               epochs = epochs,
-                               validation_data=test_generator.generate_sequences(),
-                               validation_steps=test_samples//batch_size,
-                               callbacks=[checkpoint, EarlyStopping(patience=1)])
+    hist = model.fit_generator(train_gen.generate_sequences(),
+                               steps_per_epoch=train_samples // batch_size,
+                               epochs=epochs,
+                               validation_data=test_gen.generate_sequences(),
+                               validation_steps=test_samples // batch_size,
+                               callbacks=[checkpoint,
+                                          EarlyStopping(patience=1)])
     plot_model_history(hist, args.model_name)
 
 
@@ -46,7 +47,7 @@ def evaluate(args):
 
 
 if __name__ == "__main__":
-    np.random.seed(42) # Seed for repeatability
+    np.random.seed(42)  # Seed for repeatability
 
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers()

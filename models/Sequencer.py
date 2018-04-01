@@ -44,9 +44,9 @@ class Sequencer:
                                    np.array(res[2]))
                             res = [[], [], []]
                         padded_seq = pad_sequences([seq[:i]],
-                                                   maxlen=self.max_len)[0]
+                                                   maxlen=self.max_len)
                         output_seq = to_categorical([seq[i]],
-                                                    num_classes=self.vocab_len)[0]
+                                                    num_classes=self.vocab_len)
                         res[0].append(self.features[img_id][0])
-                        res[1].append(padded_seq)
-                        res[2].append(output_seq)
+                        res[1].append(padded_seq[0])
+                        res[2].append(output_seq[0])
