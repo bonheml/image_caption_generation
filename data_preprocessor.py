@@ -1,5 +1,7 @@
 import argparse
 
+import numpy as np
+
 from data_preprocessing.image_processing import FeatureExtractor
 from data_preprocessing.text_processing import (CaptionPreProcessor,
                                                 TokenizerTrainer)
@@ -68,6 +70,8 @@ def fit_tokenizer(args):
 
 
 if __name__ == "__main__":
+    np.random.seed(42) # Seed for repeatability
+
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers()
 

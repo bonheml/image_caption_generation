@@ -1,5 +1,6 @@
 import argparse
 
+import numpy as np
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 from keras.models import load_model
 from keras.utils import plot_model
@@ -48,6 +49,8 @@ def evaluate(args):
 
 
 if __name__ == "__main__":
+    np.random.seed(42) # Seed for repeatability
+
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers()
 
