@@ -8,7 +8,7 @@ from keras.utils import plot_model
 from commons.utils import load_pickle_file
 from models.Sequencer import Sequencer
 from models.merge_model import build_merge_model
-from models.model_eval import evaluate_model
+from models.model_eval import evaluate_model, plot_model_history
 
 
 def train(args):
@@ -27,17 +27,14 @@ def train(args):
     model.summary()
     plot_model(model, to_file=args.model_name + '_model.png', show_shapes=True)
     model_file = args.model_name + '.epoch_{epoch:02d}-loss_{val_loss:.2f}.hdf5'
-    if args.models_directory:
-        filepath = args.models_directory + '/' + model_file
-    else:
-        filepath = model_file
-    checkpoint = ModelCheckpoint(filepath, save_best_only=True)
-    model.fit_generator(train_generator.generate_sequences(),
-                        steps_per_epoch=train_samples//batch_size,
-                        epochs = epochs,
-                        validation_data=test_generator.generate_sequences(),
-                        validation_steps=test_samples//batch_size,
-                        callbacks=[checkpoint, EarlyStopping(patience=1)])
+    checkpoint = ModelCheckpoint(model_file, save_best_only=True)
+    hist = model.fit_generator(train_generator.generate_sequences(),
+                               steps_per_epoch=train_samples//batch_size,
+                               epochs = epochs,
+                               validation_data=test_generator.generate_sequences(),
+                               validation_steps=test_samples//batch_size,
+                               callbacks=[checkpoint, EarlyStopping(patience=1)])
+    plot_model_history(hist, args.model_name)
 
 
 def evaluate(args):
@@ -63,7 +60,6 @@ if __name__ == "__main__":
     trainer.add_argument('test_features')
     trainer.add_argument('-m', '--model_name', default='xception',
                          choices=['xception', 'VGG16', 'VGG19'])
-    trainer.add_argument('-d', '--models_directory')
     trainer.set_defaults(func=train)
 
     # Evaluate the model

@@ -43,6 +43,7 @@ def build_merge_model(tokenizer, features_shape):
                            name='word_prediction')(wrapper_merge)
 
     model = Model(inputs=[image_input, lang_input], outputs=wrapper_output)
-    model.compile(loss='categorical_crossentropy', optimizer='adam')
+    model.compile(loss='categorical_crossentropy', optimizer='adam',
+                  metrics=['accuracy'])
 
     return model

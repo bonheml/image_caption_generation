@@ -2,6 +2,7 @@ import heapq
 
 from keras.preprocessing.sequence import pad_sequences
 from nltk.translate.bleu_score import corpus_bleu
+import matplotlib.pyplot as plt
 
 
 class Beam:
@@ -143,3 +144,30 @@ def evaluate_model(model, captions, features, tokenizer):
         y_true.append(refs)
         y_pred.append(y.split())
     get_bleu_score(y_true, y_pred)
+
+
+def plot_model_history(history, model_name):
+    """
+    Code taken from
+    https://machinelearningmastery.com/display-deep-learning-model-training-history-in-keras/
+    :param history: keras History object
+    :param model_name: name of the model (used as first part of filename)
+    :return: None
+    """
+    # summarize history for accuracy
+    plt.plot(history.history['acc'])
+    plt.plot(history.history['val_acc'])
+    plt.title('model accuracy')
+    plt.ylabel('accuracy')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'test'], loc='upper left')
+    plt.savefig(model_name + '_accuracy.png')
+
+    # summarize history for loss
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('model loss')
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'test'], loc='upper left')
+    plt.savefig(model_name + '_loss.png')
