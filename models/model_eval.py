@@ -162,6 +162,7 @@ def plot_model_history(history, model_name):
     plt.xlabel('epoch')
     plt.legend(['train', 'test'], loc='upper left')
     plt.savefig(model_name + '_accuracy.png')
+    plt.close()
 
     # summarize history for loss
     plt.plot(history.history['loss'])
@@ -171,3 +172,4 @@ def plot_model_history(history, model_name):
     plt.xlabel('epoch')
     plt.legend(['train', 'test'], loc='upper left')
     plt.savefig(model_name + '_loss.png')
+    plt.close()
