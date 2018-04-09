@@ -26,7 +26,8 @@ def build_merge_model(tokenizer, features_shape):
     image_input = Input(shape=features_shape, name='image_input')
     image_norm = BatchNormalization(input_shape=features_shape,
                                     name='image_normalisation')(image_input)
-    image_output = Dense(layer_size, name='image_output')(image_norm)
+    image_dense = Dense(layer_size, name='image_feed_forward')(image_norm)
+    image_output = Dropout(0.5, name='image_output')(image_dense)
 
     # Text generation block
     lang_input = Input(shape=(50,), name='sequence_input')
