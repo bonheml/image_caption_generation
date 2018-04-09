@@ -8,7 +8,7 @@ This dataset is available on demand [here](https://forms.illinois.edu/sec/171339
 The images and captions of this dataset must be downloaded and unzipped before use.
 
 
-The dependences should also be installed using `pip install -r requirements.txt` at the root of the project.
+The dependencies should also be installed using `pip install -r requirements.txt` at the root of the project.
 
 ## Data pre processing
 
