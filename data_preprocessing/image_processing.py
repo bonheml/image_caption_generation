@@ -2,7 +2,7 @@ from os import listdir
 from os.path import abspath, splitext
 
 from keras import Model
-from keras.applications import Xception, VGG16, MobileNet, VGG19
+from keras.applications import Xception, VGG16, VGG19
 from keras.applications.xception import preprocess_input
 from keras.preprocessing.image import load_img, img_to_array
 
@@ -22,8 +22,7 @@ class FeatureExtractor:
         """
         models = {"xception": Xception,
                   "VGG16": VGG16,
-                  "VGG19": VGG19,
-                  "mobilenet": MobileNet}
+                  "VGG19": VGG19}
         if model_name not in models:
             raise NotImplementedError
         if model_name is 'xception':
