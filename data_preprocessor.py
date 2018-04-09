@@ -30,7 +30,7 @@ def extract_all(args):
     :param args: Argparse arguments for preprocess dataset command
     :return: None
     """
-    feature_extractor = FeatureExtractor()
+    feature_extractor = FeatureExtractor(args.model_name)
     caption_cleaner = CaptionPreProcessor()
     feature_extractor.extract_all_features(args.images_directory,
                                            args.features_outfile)
@@ -81,6 +81,8 @@ if __name__ == "__main__":
     preprocessor.add_argument('captions_filename')
     preprocessor.add_argument('features_outfile')
     preprocessor.add_argument('captions_outfile')
+    preprocessor.add_argument('-m', '--model_name', default='xception',
+                              choices=['xception', 'VGG16', 'VGG19'])
     preprocessor.set_defaults(func=extract_all)
 
     # Split the saved features and cleaned captions into train test and dev
