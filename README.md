@@ -1,5 +1,6 @@
 # image caption generation
-Generate caption from images
+Generate caption from images based on the architecture proposed by Tanti, M., Gatt, A. and Camilleri, K., 2017, September. What is the Role of Recurrent Neural Networks (RNNs) in an Image Caption Generator?. In Proceedings of the 10th International Conference on Natural Language Generation (pp. 51-60).
+
 
 ## Setup
 This project use Flickr8K dataset (M. Hodosh, P. Young and J. Hockenmaier (2013) "Framing Image Description as a Ranking Task: Data, Models and Evaluation Metrics", Journal of Artificial Intelligence Research, Volume 47, pages 853-899 http://www.jair.org/papers/paper3994.html).
